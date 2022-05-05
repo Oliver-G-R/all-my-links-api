@@ -1,0 +1,22 @@
+@URL=  http://localhost:3000/auth
+
+### Sign Up
+POST {{URL}}/signUp
+Content-Type: application/json
+
+{
+    "password": "Kuhn.Ofelia",
+    "email": "sss@gmail.com",
+    "nickname": "Ofelia232"
+}
+
+### Sign In
+POST {{URL}}/signIn
+Content-Type: application/json
+
+{
+    "email": "Ofelia232@kjks.co", 
+    "password": "Kuhn.Ofelia"
+}
+
+
