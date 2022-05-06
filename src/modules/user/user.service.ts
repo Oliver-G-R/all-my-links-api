@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import { UserDto } from './dtos/user.dto'
 import { User } from './schema/user.schema'
 
@@ -8,10 +8,25 @@ import { User } from './schema/user.schema'
 export class UserService {
   constructor (@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  async create (user: UserDto): Promise<User> {
-    const createdUser = new this.userModel(user)
-    return await createdUser.save()
+  create = async (user: UserDto): Promise<User | object> => {
+    const { email, nickname } = user
+    const userExists = await this.userModel.findOne({
+      $or: [{ email }, { nickname }]
+    })
+
+    return userExists
+      ? new BadRequestException('User already exists').getResponse() as Object
+      : await new this.userModel(user).save()
   }
 
-  findAll = async () => await this.userModel.find()
+  findById = async (id: string): Promise<User | object> => {
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      return await this.userModel.findById(id) ||
+        new NotFoundException('User not found').getResponse() as object
+    }
+
+    return new BadRequestException('Invalid id').getResponse() as object
+  }
+
+  findAll = async (): Promise<User[]> => await this.userModel.find()
 }

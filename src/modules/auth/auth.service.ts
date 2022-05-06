@@ -12,7 +12,7 @@ export class AuthService {
     return { email, password }
   }
 
-  signUp (data: SignUpDto): Promise<User> {
+  signUp (data: SignUpDto): Promise<User | object> {
     return this.userService.create(data)
   }
 }
