@@ -1,13 +1,13 @@
-@URL=  http://localhost:3000/auth
+@URL=  http://localhost:3000/all-my-links-api/v1/auth
 
 ### Sign Up
 POST {{URL}}/signUp
 Content-Type: application/json
 
 {
-    "password": "Kuhn.Ofelia",
-    "email": "sss@gmail.com",
-    "nickname": "Ofelia232"
+    "password": "Kusshn.Ofelia",
+    "email": "sss@wgsssssmasil.com",
+    "nickname": "Ofelisssssswssa232"
 }
 
 ### Sign In

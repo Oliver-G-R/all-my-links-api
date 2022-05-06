@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import mongoose, { Model } from 'mongoose'
+import { Model, isValidObjectId } from 'mongoose'
 import { UserDto } from './dtos/user.dto'
 import { User } from './schema/user.schema'
 
@@ -20,7 +20,7 @@ export class UserService {
   }
 
   findById = async (id: string): Promise<User | object> => {
-    if (mongoose.Types.ObjectId.isValid(id)) {
+    if (isValidObjectId(id)) {
       return await this.userModel.findById(id) ||
         new NotFoundException('User not found').getResponse() as object
     }

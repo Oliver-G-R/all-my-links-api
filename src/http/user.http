@@ -1,0 +1,7 @@
+@URL=  http://localhost:3000/all-my-links-api/v1/user
+
+### Get All
+GET {{URL}}
+
+### Get by ID
+GET {{URL}}/6274984720d17a18ffba1e52
