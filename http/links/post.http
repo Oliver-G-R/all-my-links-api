@@ -1,0 +1,12 @@
+@URL=  http://localhost:3000/all-my-links-api/v1/links
+
+POST {{URL}}
+Content-Type: application/json
+
+{
+    "titleLink": "My second link",
+    "link": "http://www.youtube.com",
+    "socialName": "youtube",
+    "socialIcon": "http://www.youtube.com/favicon.ico",
+    "user": "6276e6fe103f525ade757e77"
+}

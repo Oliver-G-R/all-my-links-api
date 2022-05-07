@@ -6,6 +6,7 @@ import { UserModule } from '@modules/user/user.module'
 import { DbModule } from '@modules/db/db.module'
 import { ConfigModule } from '@nestjs/config'
 import { dbConfig, jwtConfig } from '@config/index'
+import { LinksModule } from '../links/links.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +17,7 @@ import { dbConfig, jwtConfig } from '@config/index'
     }),
     AuthModule,
     UserModule,
+    LinksModule,
     DbModule
   ],
   controllers: [AppController],
