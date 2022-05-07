@@ -11,5 +11,5 @@ export class UserDto {
 
   @IsString()
   @IsNotEmpty({ message: 'Nickname is required' })
-  readonly nickname: string
+  readonly nickName: string
 }

@@ -8,24 +8,27 @@ import { User } from './schema/user.schema'
 export class UserService {
   constructor (@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  create = async (user: UserDto): Promise<User | object> => {
-    const { email, nickname } = user
+  create = async (data: UserDto): Promise<User> => {
+    const { email, nickName } = data
     const userExists = await this.userModel.findOne({
-      $or: [{ email }, { nickname }]
+      $or: [{ email }, { nickName }]
     })
-
-    return userExists
-      ? new BadRequestException('User already exists').getResponse() as Object
-      : await new this.userModel(user).save()
+    return !userExists && await new this.userModel(data).save()
   }
 
-  findById = async (id: string): Promise<User | object> => {
+  findByEmailOrNickName = async (nickNameOrEmail: string):Promise<User> =>
+    await this.userModel.findOne({
+      $or: [{ email: nickNameOrEmail }, { nickName: nickNameOrEmail }]
+    })
+
+  findById = async (id: string) => {
     if (isValidObjectId(id)) {
-      return await this.userModel.findById(id) ||
-        new NotFoundException('User not found').getResponse() as object
+      const userFindId = await this.userModel.findById(id)
+      if (userFindId) return userFindId
+      else throw new NotFoundException('User not found')
     }
 
-    return new BadRequestException('Invalid id').getResponse() as object
+    throw new BadRequestException('Invalid id')
   }
 
   findAll = async (): Promise<User[]> => await this.userModel.find()

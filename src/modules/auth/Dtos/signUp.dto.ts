@@ -1,8 +1,15 @@
-import { IsNotEmpty, IsString } from 'class-validator'
-import { SignInDto } from './signIn.dto'
+import { IsNotEmpty, IsString, IsEmail } from 'class-validator'
 
-export class SignUpDto extends SignInDto {
+export class SignUpDto {
   @IsString()
   @IsNotEmpty({ message: 'Nickname is required' })
-  readonly nickname: string
+  readonly nickName: string
+
+  @IsEmail({}, { message: 'This email is not valid' })
+  @IsNotEmpty({ message: 'Email is required' })
+  readonly email: string
+
+  @IsString()
+  @IsNotEmpty({ message: 'Password is required' })
+  readonly password: string
 }

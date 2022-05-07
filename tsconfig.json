@@ -3,7 +3,8 @@
     "module": "commonjs",
     "declaration": true,
     "paths": {
-      "@modules/*": ["./src/modules/*"]
+      "@modules/*": ["./src/modules/*"],
+      "@config/*": ["./src/config/*"],
     },
     "removeComments": true,
     "emitDecoratorMetadata": true,

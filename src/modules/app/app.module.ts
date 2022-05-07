@@ -5,14 +5,14 @@ import { AuthModule } from '@modules/auth/auth.module'
 import { UserModule } from '@modules/user/user.module'
 import { DbModule } from '@modules/db/db.module'
 import { ConfigModule } from '@nestjs/config'
-import dbConfig from '../../config/db.config'
+import { dbConfig, jwtConfig } from '@config/index'
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       cache: true,
       isGlobal: true,
-      load: [dbConfig]
+      load: [dbConfig, jwtConfig]
     }),
     AuthModule,
     UserModule,

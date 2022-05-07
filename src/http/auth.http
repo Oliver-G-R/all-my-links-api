@@ -5,9 +5,9 @@ POST {{URL}}/signUp
 Content-Type: application/json
 
 {
-    "password": "Kusshn.Ofelia",
-    "email": "sss@wgsssssmasil.com",
-    "nickname": "Ofelisssssswssa232"
+    "password": "hjs7ytgd",
+    "email": "oliver73@gmail.com",
+    "nickName": "oliverdd"
 }
 
 ### Sign In
@@ -15,8 +15,8 @@ POST {{URL}}/signIn
 Content-Type: application/json
 
 {
-    "email": "Ofelia232@kjks.co", 
-    "password": "Kuhn.Ofelia"
+    "password": "hjs7ytgd", 
+    "nickNameOrEmail": "oliver73@gmail.com"
 }
 
 
