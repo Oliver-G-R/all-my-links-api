@@ -31,7 +31,14 @@ export class LinksService {
 
   create = async (data:LinkDto) => {
     const userFindById = await this.userService.findById(data.user)
-    if (userFindById) { return await new this.linksModel(data).save() }
+    if (userFindById) {
+      // save link in userModel
+      const newLink = await new this.linksModel(data).save()
+      userFindById.links.push(newLink.id)
+      await userFindById.save()
+      return newLink
+    }
+
     throw new NotFoundException('Link not save')
   }
 }

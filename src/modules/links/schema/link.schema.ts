@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Schema as MongooseSchema } from 'mongoose'
-import { User } from '../../user/schema/user.schema'
 
 @Schema()
 export class Link extends Document {
@@ -22,7 +21,7 @@ export class Link extends Document {
     @Prop({ default: Date.now })
       updatedAt: Date
 
-    @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, unique: false })
+    @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', unique: false })
       user: MongooseSchema.Types.ObjectId
 }
 

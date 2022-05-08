@@ -4,9 +4,9 @@ POST {{URL}}
 Content-Type: application/json
 
 {
-    "titleLink": "My second link",
-    "link": "http://www.youtube.com",
-    "socialName": "youtube",
-    "socialIcon": "http://www.youtube.com/favicon.ico",
-    "user": "6276e6fe103f525ade757e77"
+    "titleLink": "Github",
+    "link": "http://www.github.com",
+    "socialName": "github",
+    "socialIcon": "http://www.github.com/favicon.ico",
+    "user": "62772f45804d5d68b3b82c87"
 }

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { NextFunction } from 'express'
-import { Document } from 'mongoose'
+import { Document, Schema as MongooseSchema } from 'mongoose'
 import { HashPassword } from '../../../utils/HashPassword'
 
 @Schema()
@@ -19,6 +19,9 @@ export class User extends Document {
 
   @Prop({ default: Date.now })
     updatedAt: Date
+
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Link', unique: false })
+    links: [MongooseSchema.Types.ObjectId]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
