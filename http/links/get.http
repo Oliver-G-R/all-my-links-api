@@ -1,7 +1,9 @@
 @URL=  http://localhost:3000/all-my-links-api/v1/links
-
+@TOKEN = 
 ### Get all
 Get {{URL}}
+Authorization: Bearer {{TOKEN}}
 
 ### Get by id
-Get {{URL}}/62772f87804d5d68b3b82c8d
+Get {{URL}}/628ea61e217558efd0006ecb
+Authorization: Bearer {{TOKEN}}

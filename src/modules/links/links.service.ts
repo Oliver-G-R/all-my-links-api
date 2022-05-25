@@ -25,15 +25,17 @@ export class LinksService {
     throw new BadRequestException('Id is not valid')
   }
 
-  getALlLInks = async () =>
-    await this.linksModel.find()
+  getALlLInks = async (userId: ObjectId) =>
+    await this.linksModel.find({ user: userId })
       .populate('user', ['email', 'nickName'], this.userModel)
 
-  create = async (data:LinkDto) => {
-    const userFindById = await this.userService.findById(data.user)
+  create = async (data:LinkDto, userId:ObjectId) => {
+    const userFindById = await this.userService.findById(userId)
     if (userFindById) {
-      // save link in userModel
-      const newLink = await new this.linksModel(data).save()
+      const newLink = await new this.linksModel({
+        user: userId,
+        ...data
+      }).save()
       userFindById.links.push(newLink.id)
       await userFindById.save()
       return newLink

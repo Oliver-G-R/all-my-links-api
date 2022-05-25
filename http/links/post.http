@@ -1,12 +1,12 @@
 @URL=  http://localhost:3000/all-my-links-api/v1/links
-
+@TOKEN = 
 POST {{URL}}
+Authorization: Bearer {{TOKEN}}
 Content-Type: application/json
 
 {
-    "titleLink": "Github",
-    "link": "http://www.github.com",
-    "socialName": "github",
-    "socialIcon": "http://www.github.com/favicon.ico",
-    "user": "62772f45804d5d68b3b82c87"
+    "titleLink": "minecraft",
+    "link": "http://www.minecraft.com",
+    "socialName": "minecraft",
+    "socialIcon": "http://www.minecraft.com/favicon.ico"
 }

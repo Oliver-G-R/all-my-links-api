@@ -17,7 +17,8 @@ export class UserService {
     const userExists = await this.userModel.findOne({
       $or: [{ email }, { nickName }]
     })
-    return !userExists && await new this.userModel(data).save()
+
+    if (!userExists) { return await new this.userModel(data).save() }
   }
 
   findByEmailOrNickName = async (nickNameOrEmail: string):Promise<User> =>
@@ -31,7 +32,7 @@ export class UserService {
         await this.userModel.findById(id)
           .populate('links', '', this.linkModel)
 
-      if (userFindId) return userFindId as User
+      if (userFindId) return userFindId
       else throw new NotFoundException('User not found')
     }
 

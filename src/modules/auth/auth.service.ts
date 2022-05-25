@@ -5,7 +5,7 @@ import { SignInDto } from './Dtos/signIn.dto'
 import { User } from '../user/schema/user.schema'
 import { JwtService } from '@nestjs/jwt'
 import { HashPassword } from '../../utils/HashPassword'
-import { ITokenResponse } from './interfaces/Token'
+import { JWTResponse } from '../../types/JWT'
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  signIn = async ({ nickNameOrEmail, password }: SignInDto):Promise<ITokenResponse> => {
+  signIn = async ({ nickNameOrEmail, password }: SignInDto):Promise<JWTResponse> => {
     const emailOrNickNameExcist = await this.userService.findByEmailOrNickName(nickNameOrEmail)
 
     if (emailOrNickNameExcist) {
@@ -26,7 +26,7 @@ export class AuthService {
     throw new NotFoundException('User or email is not correct')
   }
 
-  generateJWT (user: User): ITokenResponse {
+  generateJWT (user: User): JWTResponse {
     const { nickName, email, id } = user
     const payload = { nickName, email, id }
     return {
@@ -35,7 +35,7 @@ export class AuthService {
     }
   }
 
-  async signUp (data: SignUpDto): Promise<ITokenResponse> {
+  async signUp (data: SignUpDto): Promise<JWTResponse> {
     const user = await this.userService.create(data)
     if (user) {
       return this.generateJWT(user)
