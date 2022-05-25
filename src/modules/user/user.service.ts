@@ -42,4 +42,19 @@ export class UserService {
   findAll = async (): Promise<User[]> =>
     await this.userModel.find()
       .populate('links', '', this.linkModel)
+
+  remove = async (id:ObjectId) => {
+    console.log(id)
+    if (isValidObjectId(id)) {
+      const userFindById = await this.userModel.findById(id)
+      if (userFindById) {
+        await this.userModel.findByIdAndRemove(id)
+        await this.linkModel.deleteMany({ user: id })
+        return userFindById
+      }
+
+      throw new NotFoundException('User not found')
+    }
+    throw new BadRequestException('Invalid id')
+  }
 }

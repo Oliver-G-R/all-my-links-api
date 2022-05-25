@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common'
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param } from '@nestjs/common'
 import { UserService } from './user.service'
 import { User } from './schema/user.schema'
 import { ObjectId } from 'mongoose'
@@ -15,7 +15,13 @@ export class UserController {
 
   @Get('/:id')
   @HttpCode(HttpStatus.OK)
-  findById (@Param('id') id:ObjectId): Promise<User | object> {
+  findById (@Param('id') id:ObjectId): Promise<User> {
     return this.userService.findById(id)
+  }
+
+  @Delete('/:id')
+  @HttpCode(HttpStatus.OK)
+  removeById (@Param('id') id:ObjectId) {
+    return this.userService.remove(id)
   }
 }
