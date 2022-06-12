@@ -44,7 +44,6 @@ export class UserService {
       .populate('links', '', this.linkModel)
 
   remove = async (id:ObjectId) => {
-    console.log(id)
     if (isValidObjectId(id)) {
       const userFindById = await this.userModel.findById(id)
       if (userFindById) {

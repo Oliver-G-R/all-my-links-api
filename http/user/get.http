@@ -1,4 +1,4 @@
-@URL=  http://localhost:3000/all-my-links-api/v1/user
+@URL=  http://localhost:4000/all-my-links-api/v1/user
 
 ### Get All
 GET {{URL}}

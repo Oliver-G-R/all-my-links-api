@@ -36,11 +36,34 @@ export class LinksService {
         user: userId,
         ...data
       }).save()
-      userFindById.links.push(newLink.id)
-      await userFindById.save()
+
+      await this.userModel.findByIdAndUpdate(userId, { $push: { links: newLink.id } })
+
       return newLink
     }
 
     throw new NotFoundException('Link not save')
+  }
+
+  remove = async (id:ObjectId) => {
+    if (isValidObjectId(id)) {
+      const linkFindById = await this.linksModel.findById(id)
+      if (linkFindById) {
+        await this.linksModel.findByIdAndRemove(id)
+        return linkFindById
+      } else throw new NotFoundException('Link not found')
+    }
+    throw new BadRequestException('Id is not valid')
+  }
+
+  update = async (id:ObjectId, data:LinkDto) => {
+    if (isValidObjectId(id)) {
+      const linkFindById = await this.linksModel.findById(id)
+      if (linkFindById) {
+        await this.linksModel.findByIdAndUpdate(id, data, { new: true })
+        return linkFindById
+      } else throw new NotFoundException('Link not found')
+    }
+    throw new BadRequestException('Id is not valid')
   }
 }

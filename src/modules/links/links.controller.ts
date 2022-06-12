@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { LinksService } from './links.service'
 import { LinkDto } from './dto/LinkDto'
 import { ObjectId } from 'mongoose'
@@ -29,5 +29,19 @@ export class LinksController {
   @UseGuards(AuthGuard('jwt'))
   createNewLink (@Body() body:LinkDto, @Auth() { id }: User) {
     return this.linksService.create(body, id)
+  }
+
+  @Delete('/:id')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  removeLink (@Param('id') id:ObjectId) {
+    return this.linksService.remove(id)
+  }
+
+  @Put('/:id')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  updateLink (@Param('id') id:ObjectId, @Body() body:LinkDto) {
+    return this.linksService.update(id, body)
   }
 }

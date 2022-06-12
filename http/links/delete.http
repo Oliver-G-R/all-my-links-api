@@ -1,9 +1,5 @@
 @URL=  http://localhost:4000/all-my-links-api/v1/links
 @TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrTmFtZSI6Imp1YW44NzIiLCJlbWFpbCI6Imp1YW5AZ21haWwuY29tIiwiaWQiOiI2MmE2NDBmNjc0MmNkY2IxYjVjZDBlNmIiLCJpYXQiOjE2NTUwNjI4NDEsImV4cCI6MTY1NTIzNTY0MX0.olblPNUN34eXCG9upjYwZFqF75R5W1GXbzn0iJGUjik
-### Get all
-Get {{URL}}
-Authorization: Bearer {{TOKEN}}
 
-### Get by id
-Get {{URL}}/62a6414b742cdcb1b5cd0e73
+DELETE  {{URL}}/62a6467b75c056985d4b19d9
 Authorization: Bearer {{TOKEN}}

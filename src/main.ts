@@ -7,6 +7,6 @@ async function bootstrap () {
   app.setGlobalPrefix('all-my-links-api/v1')
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
-  await app.listen(3000)
+  await app.listen(4000)
 }
 bootstrap()
