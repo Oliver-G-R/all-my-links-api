@@ -43,6 +43,21 @@ export class UserService {
     await this.userModel.find()
       .populate('links', '', this.linkModel)
 
+  findGlobalUsers = async (currentUserId:ObjectId)/* : Promise<User[]> */ => {
+    if (currentUserId) {
+      const users = await this.userModel.find(
+        { _id: { $ne: currentUserId } },
+        { nickName: 1, links: 1 })
+        .populate('links', '', this.linkModel)
+      return users
+    } else {
+      const users = await this.userModel.find({}, { nickName: 1, links: 1 })
+        .populate('links', '', this.linkModel)
+
+      return users
+    }
+  }
+
   remove = async (id:ObjectId) => {
     if (isValidObjectId(id)) {
       const userFindById = await this.userModel.findById(id)

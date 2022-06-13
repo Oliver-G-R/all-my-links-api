@@ -1,7 +1,9 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param } from '@nestjs/common'
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Query, UseGuards } from '@nestjs/common'
 import { UserService } from './user.service'
 import { User } from './schema/user.schema'
 import { ObjectId } from 'mongoose'
+import { Auth } from '@modules/auth/auth.decorator'
+import { AuthGuard } from '@nestjs/passport'
 
 @Controller('user')
 export class UserController {
@@ -11,6 +13,19 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   findAll (): Promise<User[]> {
     return this.userService.findAll()
+  }
+
+  @Get('/global-users')
+  @HttpCode(HttpStatus.OK)
+  globalUsers (@Query('currentUserId') currentUserId?:ObjectId) {
+    return this.userService.findGlobalUsers(currentUserId)
+  }
+
+  @Get('/profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  profile (@Auth() { id }: User) {
+    return this.userService.findById(id)
   }
 
   @Get('/:id')
