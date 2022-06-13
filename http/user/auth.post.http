@@ -15,8 +15,8 @@ POST {{URL}}/signIn
 Content-Type: application/json
 
 {
-    "password": "1234", 
-    "nickNameOrEmail": "juan@gmail.com"
+    "nickNameOrEmail": "oliver",
+    "password": "G7815GRO"
 }
 
 

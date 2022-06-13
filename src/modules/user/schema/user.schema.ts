@@ -11,6 +11,12 @@ export class User extends Document {
   @Prop({ required: true })
     password: string
 
+  @Prop({ required: false, unique: false })
+    avatar_url: string
+
+  @Prop({ required: false, unique: false })
+    avatar_public_id: string
+
   @Prop({ required: true, unique: true })
     nickName: string
 

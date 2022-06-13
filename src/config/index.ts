@@ -1,3 +1,4 @@
 import dbConfig from './db.config'
 import jwtConfig from './jwt.config'
-export { dbConfig, jwtConfig }
+import cloudinaryConfig from './cloudinary.config'
+export { dbConfig, jwtConfig, cloudinaryConfig }

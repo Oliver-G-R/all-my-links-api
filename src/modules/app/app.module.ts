@@ -4,16 +4,16 @@ import { AppService } from './app.service'
 import { AuthModule } from '@modules/auth/auth.module'
 import { UserModule } from '@modules/user/user.module'
 import { DbModule } from '@modules/db/db.module'
+import { LinksModule } from '@modules/links/links.module'
 import { ConfigModule } from '@nestjs/config'
-import { dbConfig, jwtConfig } from '@config/index'
-import { LinksModule } from '../links/links.module'
+import { cloudinaryConfig, dbConfig, jwtConfig } from '@config/index'
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       cache: true,
       isGlobal: true,
-      load: [dbConfig, jwtConfig]
+      load: [dbConfig, jwtConfig, cloudinaryConfig]
     }),
     AuthModule,
     UserModule,

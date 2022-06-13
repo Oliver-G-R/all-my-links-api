@@ -15,6 +15,12 @@ export class UserController {
     return this.userService.findAll()
   }
 
+  @Get('get-by-nickName/:nickName')
+  @HttpCode(HttpStatus.OK)
+  findBynickName (@Param('nickName') nickName:string): Promise<User> {
+    return this.userService.findNickName(nickName)
+  }
+
   @Get('/global-users')
   @HttpCode(HttpStatus.OK)
   globalUsers (@Query('currentUserId') currentUserId?:ObjectId) {

@@ -26,6 +26,9 @@ export class UserService {
       $or: [{ email: nickNameOrEmail }, { nickName: nickNameOrEmail }]
     })
 
+  findNickName = async (nickName: string): Promise<User> =>
+    await this.userModel.findOne({ nickName }).populate('links', '', this.linkModel)
+
   findById = async (id: ObjectId) => {
     if (isValidObjectId(id)) {
       const userFindId =
@@ -64,6 +67,19 @@ export class UserService {
       if (userFindById) {
         await this.userModel.findByIdAndRemove(id)
         await this.linkModel.deleteMany({ user: id })
+        return userFindById
+      }
+
+      throw new NotFoundException('User not found')
+    }
+    throw new BadRequestException('Invalid id')
+  }
+
+  updateProfile = async (id:ObjectId, data:UserDto) => {
+    if (isValidObjectId(id)) {
+      const userFindById = await this.userModel.findById(id)
+      if (userFindById) {
+        await this.userModel.findByIdAndUpdate(id, data, { new: true })
         return userFindById
       }
 
