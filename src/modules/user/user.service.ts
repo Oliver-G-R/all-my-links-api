@@ -4,12 +4,14 @@ import { Model, isValidObjectId, ObjectId } from 'mongoose'
 import { UserDto } from './dtos/user.dto'
 import { User } from './schema/user.schema'
 import { Link } from '../links/schema/link.schema'
-
+import { Express } from 'express'
+import { CloudinaryService } from '@modules/cloudinary/cloudinary.service'
 @Injectable()
 export class UserService {
   constructor (
     @InjectModel('User') private readonly userModel: Model<User>,
-    @InjectModel('Link') private readonly linkModel: Model<Link>
+    @InjectModel('Link') private readonly linkModel: Model<Link>,
+    private readonly cloudinaryService: CloudinaryService
   ) {}
 
   create = async (data: UserDto): Promise<User> => {
@@ -86,5 +88,32 @@ export class UserService {
       throw new NotFoundException('User not found')
     }
     throw new BadRequestException('Invalid id')
+  }
+
+  uploadAvatarToDb = async (id:ObjectId, file:Express.Multer.File):Promise<{messgae: string}> => {
+    if (isValidObjectId(id)) {
+      const userFindById = await this.userModel.findById(id)
+      if (userFindById) {
+        try {
+          const { public_id, url } = await this.cloudinaryService.uploadAvatar(file, userFindById.nickName)
+          await this.userModel.findByIdAndUpdate(id, { avatar_public_id: public_id, avatar_url: url }, { new: true })
+          return { messgae: 'Avatar uploaded' }
+        } catch (error) {
+          console.log(error)
+          throw new BadRequestException('Error to upload image')
+        }
+      } else throw new NotFoundException('User not found')
+    } else throw new BadRequestException('Invalid id')
+  }
+
+  removeAvatarToDb = async (id:ObjectId):Promise<{messgae: string}> => {
+    if (isValidObjectId(id)) {
+      const userFindById = await this.userModel.findById(id)
+      if (userFindById) {
+        await this.cloudinaryService.removeAvatar(userFindById.avatar_public_id)
+        await this.userModel.findByIdAndUpdate(id, { avatar_public_id: null, avatar_url: null }, { new: true })
+        return { messgae: 'Avatar removed' }
+      } else throw new NotFoundException('User not found')
+    } else throw new NotFoundException('invalid id')
   }
 }

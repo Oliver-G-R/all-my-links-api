@@ -1,13 +1,16 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Query, UseGuards } from '@nestjs/common'
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors, Put } from '@nestjs/common'
 import { UserService } from './user.service'
 import { User } from './schema/user.schema'
 import { ObjectId } from 'mongoose'
 import { Auth } from '@modules/auth/auth.decorator'
 import { AuthGuard } from '@nestjs/passport'
-
+import { FileInterceptor } from '@nestjs/platform-express'
+import { Express } from 'express'
 @Controller('user')
 export class UserController {
-  constructor (private readonly userService: UserService) {}
+  constructor (
+    private readonly userService: UserService
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -25,6 +28,19 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   globalUsers (@Query('currentUserId') currentUserId?:ObjectId) {
     return this.userService.findGlobalUsers(currentUserId)
+  }
+
+  @Post('upload-avatar')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('file'))
+  uploadAvatar (@Auth() { id }: User, @UploadedFile() file: Express.Multer.File):Promise<{ messgae: string }> {
+    return this.userService.uploadAvatarToDb(id, file)
+  }
+
+  @Put('remove-avatar')
+  @UseGuards(AuthGuard('jwt'))
+  removeAvatar (@Auth() { id }:User):Promise<{ messgae: string }> {
+    return this.userService.removeAvatarToDb(id)
   }
 
   @Get('/profile')
