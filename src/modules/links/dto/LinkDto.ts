@@ -10,9 +10,5 @@ export class LinkDto {
 
     @IsNotEmpty()
     @IsString()
-      socialName: string
-
-    @IsNotEmpty()
-    @IsString()
       socialIcon: string
 }

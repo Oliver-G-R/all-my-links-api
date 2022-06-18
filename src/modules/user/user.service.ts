@@ -20,7 +20,9 @@ export class UserService {
       $or: [{ email }, { nickName }]
     })
 
-    if (!userExists) { return await new this.userModel(data).save() }
+    if (!userExists) {
+      return await new this.userModel(data).save()
+    }
   }
 
   findByEmailOrNickName = async (nickNameOrEmail: string):Promise<User> =>

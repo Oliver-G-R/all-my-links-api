@@ -10,9 +10,6 @@ export class Link extends Document {
       link: string
 
     @Prop()
-      socialName: string
-
-    @Prop()
       socialIcon: string
 
     @Prop({ default: Date.now })
