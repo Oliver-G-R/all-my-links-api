@@ -34,8 +34,8 @@ export class UserController {
   @Post('upload-avatar')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
-  uploadAvatar (@Auth() { id }: User, @UploadedFile() file: Express.Multer.File):Promise<{ messgae: string }> {
-    return this.userService.uploadAvatarToDb(id, file)
+  uploadAvatar (@Auth() { id }: User, @UploadedFile() file: Express.Multer.File):Promise<{avatar_url: string}> {
+    return this.userService.uploadAvatar(id, file)
   }
 
   @Put('remove-avatar')

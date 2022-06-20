@@ -97,14 +97,14 @@ export class UserService {
     throw new BadRequestException('Invalid id')
   }
 
-  uploadAvatarToDb = async (id:ObjectId, file:Express.Multer.File):Promise<{messgae: string}> => {
+  uploadAvatar = async (id:ObjectId, file:Express.Multer.File):Promise<{avatar_url: string}> => {
     if (isValidObjectId(id)) {
       const userFindById = await this.userModel.findById(id)
       if (userFindById) {
         try {
           const { public_id, url } = await this.cloudinaryService.uploadAvatar(file, userFindById.nickName)
           await this.userModel.findByIdAndUpdate(id, { avatar_public_id: public_id, avatar_url: url }, { new: true })
-          return { messgae: 'Avatar uploaded' }
+          return { avatar_url: url }
         } catch (error) {
           console.log(error)
           throw new BadRequestException('Error to upload image')
