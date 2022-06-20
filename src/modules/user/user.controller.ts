@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors, Put } from '@nestjs/common'
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors, Put, Body } from '@nestjs/common'
 import { UserService } from './user.service'
 import { User } from './schema/user.schema'
 import { ObjectId } from 'mongoose'
@@ -6,6 +6,7 @@ import { Auth } from '@modules/auth/auth.decorator'
 import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { Express } from 'express'
+import { UpdateUserDto } from './dtos/user.dto'
 @Controller('user')
 export class UserController {
   constructor (
@@ -48,6 +49,13 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   profile (@Auth() { id }: User) {
     return this.userService.findById(id)
+  }
+
+  @Put('/update-profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  updateProfile (@Auth() { id }: User, @Body() data: UpdateUserDto) {
+    return this.userService.updateProfile(id, data)
   }
 
   @Get('/:id')

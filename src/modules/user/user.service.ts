@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, isValidObjectId, ObjectId } from 'mongoose'
-import { UserDto } from './dtos/user.dto'
+import { UserDto, UpdateUserDto } from './dtos/user.dto'
 import { User } from './schema/user.schema'
 import { Link } from '../links/schema/link.schema'
 import { Express } from 'express'
@@ -79,14 +79,19 @@ export class UserService {
     throw new BadRequestException('Invalid id')
   }
 
-  updateProfile = async (id:ObjectId, data:UserDto) => {
+  updateProfile = async (id:ObjectId, data:UpdateUserDto) => {
     if (isValidObjectId(id)) {
       const userFindById = await this.userModel.findById(id)
+      const findEmailOrNickName = await this.userModel.findOne({
+        $or: [{ email: data.email }, { nickName: data.nickName }],
+        _id: { $ne: id }
+      })
+      if (findEmailOrNickName) throw new BadRequestException('This data alredy used')
       if (userFindById) {
-        await this.userModel.findByIdAndUpdate(id, data, { new: true })
-        return userFindById
+        const updatedUser = await this.userModel.findByIdAndUpdate(id, data, { new: true })
+          .populate('links', '', this.linkModel)
+        return updatedUser
       }
-
       throw new NotFoundException('User not found')
     }
     throw new BadRequestException('Invalid id')
