@@ -60,8 +60,8 @@ export class LinksService {
     if (isValidObjectId(id)) {
       const linkFindById = await this.linksModel.findById(id)
       if (linkFindById) {
-        await this.linksModel.findByIdAndUpdate(id, data, { new: true })
-        return linkFindById
+        const updatedLink = await this.linksModel.findByIdAndUpdate(id, data, { new: true })
+        return updatedLink
       } else throw new NotFoundException('Link not found')
     }
     throw new BadRequestException('Id is not valid')
