@@ -50,10 +50,8 @@ export class LinksService {
       const linkFindById = await this.linksModel.findById(id)
       if (linkFindById) {
         await this.linksModel.findByIdAndRemove(id)
-        return linkFindById
       } else throw new NotFoundException('Link not found')
-    }
-    throw new BadRequestException('Id is not valid')
+    } else throw new BadRequestException('Id is not valid')
   }
 
   update = async (id:ObjectId, data:LinkDto) => {
