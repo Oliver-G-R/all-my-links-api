@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors, Put, Body } from '@nestjs/common'
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, UploadedFile, UseGuards, UseInterceptors, Put, Body } from '@nestjs/common'
 import { UserService } from './user.service'
 import { User } from './schema/user.schema'
 import { ObjectId } from 'mongoose'
@@ -27,8 +27,8 @@ export class UserController {
 
   @Get('/global-users')
   @HttpCode(HttpStatus.OK)
-  globalUsers (@Query('currentUserId') currentUserId?:ObjectId) {
-    return this.userService.findGlobalUsers(currentUserId)
+  globalUsers () {
+    return this.userService.findGlobalUsers()
   }
 
   @Post('upload-avatar')
