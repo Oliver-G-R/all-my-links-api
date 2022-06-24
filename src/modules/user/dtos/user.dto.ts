@@ -1,5 +1,5 @@
-import { OmitType } from '@nestjs/swagger'
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
+import { PartialType } from '@nestjs/mapped-types'
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class UserDto {
   @IsEmail({ message: 'This email is not valid' })
@@ -13,6 +13,14 @@ export class UserDto {
   @IsString()
   @IsNotEmpty({ message: 'Nickname is required' })
   readonly nickName: string
+
+  @IsString()
+  @IsNotEmpty()
+  readonly fullName: string
+
+  @IsString()
+  @IsOptional()
+  readonly bio:string
 }
 
-export class UpdateUserDto extends OmitType(UserDto, ['password'] as const) {}
+export class UpdateUserDto extends PartialType(UserDto) {}

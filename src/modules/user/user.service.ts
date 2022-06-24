@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, isValidObjectId, ObjectId } from 'mongoose'
-import { UserDto, UpdateUserDto } from './dtos/user.dto'
+import { UpdateUserDto, UserDto } from './dtos/user.dto'
 import { User } from './schema/user.schema'
 import { Link } from '../links/schema/link.schema'
 import { Express } from 'express'
@@ -30,8 +30,11 @@ export class UserService {
       $or: [{ email: nickNameOrEmail }, { nickName: nickNameOrEmail }]
     })
 
-  findNickName = async (nickName: string): Promise<User> =>
-    await this.userModel.findOne({ nickName }).populate('links', '', this.linkModel)
+  findNickName = async (nickName: string): Promise<User> => {
+    const user = await this.userModel.findOne({ nickName }).populate('links', '', this.linkModel)
+    if (user) return user
+    throw new BadRequestException('User not Found')
+  }
 
   findById = async (id: ObjectId) => {
     if (isValidObjectId(id)) {

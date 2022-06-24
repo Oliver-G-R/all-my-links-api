@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
-import { SignUpDto } from './Dtos/signUp.dto'
 import { UserService } from '../user/user.service'
 import { SignInDto } from './Dtos/signIn.dto'
 import { User } from '../user/schema/user.schema'
 import { JwtService } from '@nestjs/jwt'
 import { HashPassword } from '../../utils/HashPassword'
 import { JWTResponse } from '../../types/JWT'
+import { UserDto } from '../user/dtos/user.dto'
 
 @Injectable()
 export class AuthService {
@@ -35,7 +35,7 @@ export class AuthService {
     }
   }
 
-  async signUp (data: SignUpDto): Promise<JWTResponse> {
+  async signUp (data: UserDto): Promise<JWTResponse> {
     const user = await this.userService.create(data)
     if (user) {
       return this.generateJWT(user)
