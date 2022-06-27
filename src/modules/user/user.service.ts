@@ -31,7 +31,10 @@ export class UserService {
     })
 
   findNickName = async (nickName: string): Promise<User> => {
-    const user = await this.userModel.findOne({ nickName }).populate('links', '', this.linkModel)
+    const user = await this.userModel.findOne({ nickName })
+      .populate('links', '', this.linkModel)
+      .populate('principalAccount', '', this.linkModel)
+
     if (user) return user
     throw new BadRequestException('User not Found')
   }
@@ -52,6 +55,7 @@ export class UserService {
   findAll = async (): Promise<User[]> =>
     await this.userModel.find()
       .populate('links', '', this.linkModel)
+      .populate('principalAccount', '', this.linkModel)
 
   findGlobalUsers = async () =>
     await this.userModel.find({}, { nickName: 1, avatar_url: 1 })
@@ -97,7 +101,6 @@ export class UserService {
           await this.userModel.findByIdAndUpdate(id, { avatar_public_id: public_id, avatar_url: url }, { new: true })
           return { avatar_url: url }
         } catch (error) {
-          console.log(error)
           throw new BadRequestException('Error to upload image')
         }
       } else throw new NotFoundException('User not found')
@@ -113,5 +116,17 @@ export class UserService {
         return { messgae: 'Avatar removed' }
       } else throw new NotFoundException('User not found')
     } else throw new NotFoundException('invalid id')
+  }
+
+  setPrincipalAccount = async (idLink:ObjectId) => {
+    if (!isValidObjectId(idLink)) throw new BadRequestException('This id is not valid')
+
+    const findLink = await this.linkModel.findById(idLink)
+
+    if (!findLink) throw new NotFoundException('Not found link in this account')
+
+    await this.userModel.findByIdAndUpdate(findLink.user,
+      { $set: { principalAccount: findLink.id } }, { new: true })
+      .populate('principalAccount', '', this.linkModel)
   }
 }

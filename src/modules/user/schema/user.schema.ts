@@ -17,9 +17,6 @@ export class User extends Document {
   @Prop()
     bio:string
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Link', unique: false })
-    principalAccount: MongooseSchema.Types.ObjectId
-
   @Prop({ required: false, unique: false })
     avatar_url: string
 
@@ -34,6 +31,9 @@ export class User extends Document {
 
   @Prop({ default: Date.now })
     updatedAt: Date
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Link', unique: false })
+    principalAccount: MongooseSchema.Types.ObjectId
 
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Link', unique: false })
     links: [MongooseSchema.Types.ObjectId]
