@@ -50,6 +50,9 @@ export class LinksService {
       const linkFindById = await this.linksModel.findById(id)
       if (linkFindById) {
         await this.linksModel.findByIdAndRemove(id)
+        await this.userModel.findByIdAndUpdate(linkFindById.user, {
+          $pull: { links: id }
+        })
       } else throw new NotFoundException('Link not found')
     } else throw new BadRequestException('Id is not valid')
   }
