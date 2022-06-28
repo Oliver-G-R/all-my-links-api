@@ -135,4 +135,15 @@ export class UserService {
 
     return updatedUser.principalAccount
   }
+
+  removePrincipalAccount = async (idLink:ObjectId) => {
+    if (!isValidObjectId(idLink)) throw new BadRequestException('This id is not valid')
+
+    const findLink = await this.linkModel.findById(idLink)
+
+    if (!findLink) throw new NotFoundException('Not found link in this account')
+
+    await this.userModel.findByIdAndUpdate(findLink.user,
+      { $set: { principalAccount: null } }, { new: true })
+  }
 }

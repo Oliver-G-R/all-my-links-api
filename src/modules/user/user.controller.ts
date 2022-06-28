@@ -76,4 +76,11 @@ export class UserController {
   setPrincipalAccount (@Param('idLink') idLink:ObjectId) {
     return this.userService.setPrincipalAccount(idLink)
   }
+
+  @Delete('/remove-principal-account/:idLink')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  removePrincipalAccount (@Param('idLink') idLink:ObjectId) {
+    return this.userService.removePrincipalAccount(idLink)
+  }
 }
