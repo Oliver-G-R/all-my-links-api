@@ -44,6 +44,7 @@ export class UserService {
       const userFindId =
         await this.userModel.findById(id)
           .populate('links', '', this.linkModel)
+          .populate('principalAccount', '', this.linkModel)
 
       if (userFindId) return userFindId
       else throw new NotFoundException('User not found')
@@ -59,6 +60,7 @@ export class UserService {
 
   findGlobalUsers = async () =>
     await this.userModel.find({}, { nickName: 1, avatar_url: 1 })
+      .populate('principalAccount', '', this.linkModel)
 
   remove = async (id:ObjectId) => {
     if (isValidObjectId(id)) {
@@ -85,6 +87,8 @@ export class UserService {
       if (userFindById) {
         const updatedUser = await this.userModel.findByIdAndUpdate(id, data, { new: true })
           .populate('links', '', this.linkModel)
+          .populate('principalAccount', '', this.linkModel)
+
         return updatedUser
       }
       throw new NotFoundException('User not found')
@@ -125,8 +129,10 @@ export class UserService {
 
     if (!findLink) throw new NotFoundException('Not found link in this account')
 
-    await this.userModel.findByIdAndUpdate(findLink.user,
+    const updatedUser = await this.userModel.findByIdAndUpdate(findLink.user,
       { $set: { principalAccount: findLink.id } }, { new: true })
       .populate('principalAccount', '', this.linkModel)
+
+    return updatedUser.principalAccount
   }
 }

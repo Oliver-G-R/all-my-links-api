@@ -51,6 +51,7 @@ export class LinksService {
       if (linkFindById) {
         await this.linksModel.findByIdAndRemove(id)
         await this.userModel.findByIdAndUpdate(linkFindById.user, {
+          $set: { principalAccount: null },
           $pull: { links: id }
         })
       } else throw new NotFoundException('Link not found')

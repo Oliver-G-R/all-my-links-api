@@ -71,8 +71,8 @@ export class UserController {
   }
 
   @Post('/set-principal-account/:idLink')
-  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
   setPrincipalAccount (@Param('idLink') idLink:ObjectId) {
     return this.userService.setPrincipalAccount(idLink)
   }
