@@ -59,7 +59,7 @@ export class UserService {
       .populate('principalAccount', '', this.linkModel)
 
   findGlobalUsers = async () =>
-    await this.userModel.find({}, { nickName: 1, avatar_url: 1 })
+    await this.userModel.find({}, { nickName: 1, avatar_url: 1, fullName: 1 })
       .populate('principalAccount', '', this.linkModel)
 
   remove = async (id:ObjectId) => {
