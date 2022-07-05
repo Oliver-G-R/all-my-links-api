@@ -7,7 +7,10 @@ export class CloudinaryService {
   uploadAvatar (file: Express.Multer.File, nickName:string): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream({
-        folder: nickName
+        folder: nickName,
+        transformation: [
+          { width: 500, height: 500, crop: 'scale' }
+        ]
       }, (error, result) => {
         if (error) return reject(error)
         resolve(result)
