@@ -101,9 +101,9 @@ export class UserService {
       const userFindById = await this.userModel.findById(id)
       if (userFindById) {
         try {
-          const { public_id, url } = await this.cloudinaryService.uploadAvatar(file, userFindById.nickName)
-          await this.userModel.findByIdAndUpdate(id, { avatar_public_id: public_id, avatar_url: url }, { new: true })
-          return { avatar_url: url }
+          const { public_id, secure_url } = await this.cloudinaryService.uploadAvatar(file, userFindById.nickName)
+          await this.userModel.findByIdAndUpdate(id, { avatar_public_id: public_id, avatar_url: secure_url }, { new: true })
+          return { avatar_url: secure_url }
         } catch (error) {
           throw new BadRequestException('Error to upload image')
         }
