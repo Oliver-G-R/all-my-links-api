@@ -1,11 +1,13 @@
 import { Global, Module } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 
 @Global()
 @Module({
   imports: [
+
     MongooseModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const connection = configService.get('database.connection')
         const host = configService.get('database.host')
