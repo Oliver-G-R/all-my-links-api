@@ -8,14 +8,15 @@ import { MongooseModule } from '@nestjs/mongoose'
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
         const connection = configService.get('database.connection')
-        const port = configService.get('database.port')
         const host = configService.get('database.host')
+        const port = configService.get('database.port')
         const dbName = configService.get('database.dbName')
+        const user = configService.get('database.user')
+        const password = configService.get('database.pass')
+        const uriDev = `mongodb://${host}:${port}`
+        const uriProd = `${connection}://${user}:${password}@${dbName}.${host}/`
         return {
-          uri: `${connection}://${host}:${port}/${dbName}`,
-          user: configService.get('database.user'),
-          pass: configService.get('database.pass'),
-          dbName
+          uri: process.env.NODE_ENV === 'development' ? uriDev : uriProd
         }
       },
       inject: [ConfigService]
