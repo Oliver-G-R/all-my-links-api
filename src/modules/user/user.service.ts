@@ -6,6 +6,7 @@ import { User } from './schema/user.schema'
 import { Link } from '../links/schema/link.schema'
 import { Express } from 'express'
 import { CloudinaryService } from '@modules/cloudinary/cloudinary.service'
+import { removeFile } from 'src/utils/images'
 @Injectable()
 export class UserService {
   constructor (
@@ -97,12 +98,14 @@ export class UserService {
   }
 
   uploadAvatar = async (id:ObjectId, file:Express.Multer.File):Promise<{avatar_url: string}> => {
+    if (!file) throw new BadRequestException('Invalid File')
     if (isValidObjectId(id)) {
       const userFindById = await this.userModel.findById(id)
       if (userFindById) {
         try {
           const { public_id, secure_url } = await this.cloudinaryService.uploadAvatar(file, userFindById.nickName)
           await this.userModel.findByIdAndUpdate(id, { avatar_public_id: public_id, avatar_url: secure_url }, { new: true })
+          removeFile(file.path)
           return { avatar_url: secure_url }
         } catch (error) {
           throw new BadRequestException('Error to upload image')

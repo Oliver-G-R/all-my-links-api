@@ -5,8 +5,10 @@ import { ObjectId } from 'mongoose'
 import { Auth } from '@modules/auth/auth.decorator'
 import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { Express } from 'express'
 import { UpdateUserDto } from './dtos/user.dto'
+import { Express } from 'express'
+import { ValidateImage, createName } from '../../utils/images'
+import { diskStorage } from 'multer'
 @Controller('user')
 export class UserController {
   constructor (
@@ -33,8 +35,14 @@ export class UserController {
 
   @Post('upload-avatar')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('file'))
-  uploadAvatar (@Auth() { id }: User, @UploadedFile() file: Express.Multer.File):Promise<{avatar_url: string}> {
+  @UseInterceptors(FileInterceptor('file', {
+    fileFilter: ValidateImage,
+    storage: diskStorage({
+      destination: './uploads',
+      filename: createName
+    })
+  }))
+  uploadAvatar (@Auth() { id }: User, @UploadedFile() file: Express.Multer.File) {
     return this.userService.uploadAvatar(id, file)
   }
 
