@@ -5,7 +5,7 @@ import { AppModule } from './modules/app/app.module'
 async function bootstrap () {
   const app = await NestFactory.create(AppModule)
   app.setGlobalPrefix('all-my-links-api/v1')
-  const whitelist = ['https://all-my-links-front.vercel.app/']
+  const whitelist = ['https://all-my-links-front.vercel.app']
 
   app.enableCors({
     origin: function (origin, callback) {
