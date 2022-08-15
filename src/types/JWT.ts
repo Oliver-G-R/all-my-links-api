@@ -9,8 +9,13 @@ interface JWTResponse{
     token: string,
     user: User
 }
+interface JWTPayloadAfterConfirm extends Omit<JWTPayload, 'id'>{
+  fullName: string
+  pass: string
+}
 
 export {
   JWTPayload,
-  JWTResponse
+  JWTResponse,
+  JWTPayloadAfterConfirm
 }

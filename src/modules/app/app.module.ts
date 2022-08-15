@@ -6,7 +6,7 @@ import { UserModule } from '@modules/user/user.module'
 import { DbModule } from '@modules/db/db.module'
 import { LinksModule } from '@modules/links/links.module'
 import { ConfigModule } from '@nestjs/config'
-import { cloudinaryConfig, dbConfig, jwtConfig } from '@config/index'
+import { cloudinaryConfig, dbConfig, jwtConfig, gmailConfig, frontConfig } from '@config/index'
 
 const ENV = process.env.NODE_ENV
 @Module({
@@ -15,7 +15,7 @@ const ENV = process.env.NODE_ENV
       envFilePath: ENV === 'development' ? '.dev.env' : '.prod.env',
       cache: true,
       isGlobal: true,
-      load: [dbConfig, jwtConfig, cloudinaryConfig]
+      load: [dbConfig, jwtConfig, cloudinaryConfig, gmailConfig, frontConfig]
     }),
     AuthModule,
     UserModule,

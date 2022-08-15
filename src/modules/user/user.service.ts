@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, isValidObjectId, ObjectId } from 'mongoose'
-import { UpdateUserDto, UserDto } from './dtos/user.dto'
+import { UpdateUserDto } from './dtos/user.dto'
 import { User } from './schema/user.schema'
 import { Link } from '../links/schema/link.schema'
 import { Express } from 'express'
 import { CloudinaryService } from '@modules/cloudinary/cloudinary.service'
 import { removeFile } from 'src/utils/images'
+import { JWTPayloadAfterConfirm } from 'src/types/JWT'
 @Injectable()
 export class UserService {
   constructor (
@@ -15,14 +16,19 @@ export class UserService {
     private readonly cloudinaryService: CloudinaryService
   ) {}
 
-  create = async (data: UserDto): Promise<User> => {
+  create = async (data: JWTPayloadAfterConfirm): Promise<User> => {
     const { email, nickName } = data
     const userExists = await this.userModel.findOne({
       $or: [{ email }, { nickName }]
     })
 
     if (!userExists) {
-      return await new this.userModel(data).save()
+      return await new this.userModel({
+        ...data,
+        password: data.pass
+      }).save()
+    } else {
+      throw new BadRequestException('User already exists')
     }
   }
 

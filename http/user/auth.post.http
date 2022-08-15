@@ -1,13 +1,14 @@
-@URL=  http://localhost:4000/all-my-links-api/v1/auth
+@URL=  http://localhost:3000/all-my-links-api/v1/auth
 
 ### Sign Up
 POST {{URL}}/signUp
 Content-Type: application/json
 
 {
-    "password": "1234",
-    "email": "juan@gmail.com",
-    "nickName": "juan872"
+    "password": "G7815GRO",
+    "email": "olivergr1014@gmail.com",
+    "nickName": "olivergr1014",
+    "fullName": "Oliver Guerro Ruiz"
 }
 
 ### Sign In
@@ -15,8 +16,9 @@ POST {{URL}}/signIn
 Content-Type: application/json
 
 {
-    "nickNameOrEmail": "oliver",
-    "password": "G7815GRO"
+    "nickNameOrEmail": "juan872",
+    "password": "1234"
 }
 
+### Verify Email
 

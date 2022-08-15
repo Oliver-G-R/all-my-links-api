@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { NextFunction } from 'express'
 import { Document, Schema as MongooseSchema } from 'mongoose'
-import { HashPassword } from '../../../utils/HashPassword'
 
 @Schema()
 export class User extends Document {
@@ -26,6 +24,9 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
     nickName: string
 
+  @Prop({ default: false, required: false })
+    isVerify: boolean
+
   @Prop({ default: Date.now })
     createdAt: Date
 
@@ -40,15 +41,6 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
-
-UserSchema.pre('save', async function (next: NextFunction) {
-  const user = this
-
-  if (!user.isModified('password')) return next()
-
-  const newPasswordHash = HashPassword.hash(user.password)
-  user.password = newPasswordHash
-})
 
 UserSchema.set('toJSON', {
   transform: function (doc, ret) {
