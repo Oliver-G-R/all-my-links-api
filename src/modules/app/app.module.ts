@@ -7,6 +7,7 @@ import { DbModule } from '@modules/db/db.module'
 import { LinksModule } from '@modules/links/links.module'
 import { ConfigModule } from '@nestjs/config'
 import { cloudinaryConfig, dbConfig, jwtConfig, gmailConfig, frontConfig } from '@config/index'
+import { ThrottlerModule } from '@nestjs/throttler'
 
 const ENV = process.env.NODE_ENV
 @Module({
@@ -20,8 +21,13 @@ const ENV = process.env.NODE_ENV
     AuthModule,
     UserModule,
     LinksModule,
-    DbModule
+    DbModule,
+    ThrottlerModule.forRoot({
+      ttl: 5 * 60, // 5 minutes
+      limit: 2
+    })
   ],
+
   controllers: [AppController],
   providers: [AppService]
 })

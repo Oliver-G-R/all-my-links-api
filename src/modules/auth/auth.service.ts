@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException, Inject, UnauthorizedException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+  UnauthorizedException
+} from '@nestjs/common'
 import { UserService } from '../user/user.service'
 import { SignInDto } from './Dtos/signIn.dto'
 import { User } from '../user/schema/user.schema'
@@ -17,10 +23,8 @@ export class AuthService {
     private jwtService: JwtService,
     private mailerService: MailerService,
     @InjectModel('User') private readonly userModel: Model<User>,
-    @Inject(ConfigService) private configService:ConfigService
-
-  ) {
-  }
+    @Inject(ConfigService) private configService: ConfigService
+  ) {}
 
   generateJWT (user: User): JWTResponse {
     const { nickName, email, id } = user
@@ -36,17 +40,30 @@ export class AuthService {
 
     const hashedPassword = HashPassword.hash(password)
 
-    const payload: JWTPayloadAfterConfirm = { email, fullName, nickName, pass: hashedPassword }
+    const payload: JWTPayloadAfterConfirm = {
+      email,
+      fullName,
+      nickName,
+      pass: hashedPassword
+    }
     return this.jwtService.sign(payload, {
       expiresIn: '1m'
     })
   }
 
-  signIn = async ({ nickNameOrEmail, password }: SignInDto):Promise<JWTResponse> => {
-    const emailOrNickNameExcist = await this.userService.findByEmailOrNickName(nickNameOrEmail)
+  signIn = async ({
+    nickNameOrEmail,
+    password
+  }: SignInDto): Promise<JWTResponse> => {
+    const emailOrNickNameExcist = await this.userService.findByEmailOrNickName(
+      nickNameOrEmail
+    )
 
     if (emailOrNickNameExcist) {
-      const matchPassword = HashPassword.comparePassword(password, emailOrNickNameExcist.password)
+      const matchPassword = HashPassword.comparePassword(
+        password,
+        emailOrNickNameExcist.password
+      )
 
       if (matchPassword) return this.generateJWT(emailOrNickNameExcist)
       else throw new NotFoundException('User or email is not correct')
@@ -54,20 +71,40 @@ export class AuthService {
     throw new NotFoundException('User or email is not correct')
   }
 
-  async signUp (data: UserDto):Promise<{message: string}> {
+  async signUp (data: UserDto): Promise<{ message: string }> {
     const userExists = await this.userModel.findOne({
       $or: [{ email: data.email }, { nickName: data.nickName }]
     })
 
     if (!userExists) {
-      await this.sendConfirmationEmail(data)
-      return {
-        message: 'Confirmation email has been sent'
-      }
+      return await this.sendConfirmationEmail(data)
     } else throw new BadRequestException('User exist')
   }
 
-  async sendConfirmedEmail (user:JWTPayloadAfterConfirm) {
+  async validateJWT (token:string) {
+    try {
+      return await this.jwtService.verify<JWTPayloadAfterConfirm>(
+        token,
+        {
+          secret: this.configService.get('jwt.secret')
+        }
+      )
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token or token expired')
+    }
+  }
+
+  async createUserAfterConfirmation (token: string) {
+    const userFromToken: JWTPayloadAfterConfirm = await this.validateJWT(token)
+
+    if (userFromToken) {
+      const user = await this.userService.create(userFromToken)
+      await this.sendConfirmedEmail(userFromToken)
+      return this.generateJWT(user)
+    }
+  }
+
+  async sendConfirmedEmail (user: JWTPayloadAfterConfirm) {
     const { email, fullName } = user
     await this.mailerService.sendMail({
       to: email,
@@ -80,37 +117,35 @@ export class AuthService {
     })
   }
 
-  async createUserAfterConfirmation (token: string) {
-    let userFromToken: JWTPayloadAfterConfirm
-
-    try {
-      // eslint-disable-next-line no-unused-vars
-      userFromToken = await this.jwtService.verify<JWTPayloadAfterConfirm>(token, {
-        secret: this.configService.get('jwt.secret')
-      })
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token or token expired')
-    }
-
-    if (userFromToken) {
-      const user = await this.userService.create(userFromToken)
-      await this.sendConfirmedEmail(userFromToken)
-      return this.generateJWT(user)
-    }
-  }
-
-  async sendConfirmationEmail (user:UserDto) {
-    const token = this.generateJWTForEmailConfirmation(user)
-    await this.mailerService.sendMail({
-      to: user.email,
-      subject: 'Welcome to All My Links, email confirmation',
-      text: `
-        Welcome to All My Links
-        
-        Please confirm your email by clicking the link below:
-        
-        ${this.configService.get('front.verifyUrl')}?token=${token}
-      `
+  async sendConfirmationEmail (user: UserDto): Promise<{
+    message: string;
+  }> {
+    const userExists = await this.userModel.findOne({
+      $or: [{ email: user.email }, { nickName: user.nickName }]
     })
+
+    if (!userExists) {
+      const token = this.generateJWTForEmailConfirmation(user)
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: 'Welcome to All My Links, email confirmation',
+          text: `
+            Welcome to All My Links
+            
+            Please confirm your email by clicking the link below:
+            
+            ${this.configService.get('front.verifyUrl')}?token=${token}
+          `
+        })
+        return {
+          message: 'Confirmation email has been sent'
+        }
+      } catch (error) {
+        throw new BadRequestException('Confirmation email has not been sent')
+      }
+    } else {
+      throw new BadRequestException('This email is already confirmed')
+    }
   }
 }
