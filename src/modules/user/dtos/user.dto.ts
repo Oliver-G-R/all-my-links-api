@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types'
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator'
 
 export class UserDto {
   @IsEmail({ message: 'This email is not valid' })
@@ -14,6 +14,7 @@ export class UserDto {
 
   @IsString()
   @IsNotEmpty({ message: 'Nickname is required' })
+  @Matches(/^[a-z0-9_.]+$/, { message: 'Nickname is not valid' })
   readonly nickName: string
 
   @IsString()
