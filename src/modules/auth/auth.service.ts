@@ -26,12 +26,14 @@ export class AuthService {
     @Inject(ConfigService) private configService: ConfigService
   ) {}
 
-  generateJWT (user: User): JWTResponse {
+  generateJWT (user: User, ex?:string): JWTResponse {
     const { nickName, email, id } = user
     const payload = { nickName, email, id }
     return {
       user,
-      token: this.jwtService.sign(payload)
+      token: this.jwtService.sign(payload, {
+        expiresIn: ex || this.configService.get('jwt.expiresIn')
+      })
     }
   }
 
@@ -99,21 +101,20 @@ export class AuthService {
 
     if (userFromToken) {
       const user = await this.userService.create(userFromToken)
-      await this.sendConfirmedEmail(userFromToken)
+      await this.sendConfirmedEmail(userFromToken.email, `
+          Hello ${userFromToken.fullName},
+          Your email has been confirmed.
+          You can now sign in to your account.
+        `, 'Welcome to All My Links, email confirmed')
       return this.generateJWT(user)
     }
   }
 
-  async sendConfirmedEmail (user: JWTPayloadAfterConfirm) {
-    const { email, fullName } = user
+  async sendConfirmedEmail (emailUser: string, text:string, subject:string) {
     await this.mailerService.sendMail({
-      to: email,
-      subject: 'Welcome to All My Links, email confirmed',
-      text: `
-        Hello ${fullName},
-        Your email has been confirmed.
-        You can now sign in to your account.
-      `
+      to: emailUser,
+      subject,
+      text
     })
   }
 
@@ -146,6 +147,56 @@ export class AuthService {
       }
     } else {
       throw new BadRequestException('This email is already confirmed')
+    }
+  }
+
+  async forgotPassword (email: string) {
+    const user = await this.userModel.findOne({ email })
+
+    if (user) {
+      const generateToken = this.generateJWT(user, '1m')
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: 'All My Links, password reset',
+          text: `
+            Hello ${user.nickName},
+            Please click the link below to reset your password:
+            
+            ${this.configService.get('front.resetPasswordUrl')}?token=${generateToken.token}
+          `
+        })
+        return {
+          message: 'Password reset email has been sent'
+        }
+      } catch (error) {
+        throw new BadRequestException('Password reset email has not been sent')
+      }
+    } else {
+      throw new NotFoundException('User not found')
+    }
+  }
+
+  async resetPassword (token: string, password: string):Promise<JWTResponse> {
+    const userFromToken = await this.validateJWT(token)
+
+    if (userFromToken) {
+      const user = await this.userModel.findOne({ email: userFromToken.email })
+
+      if (user) {
+        const hashedPassword = HashPassword.hash(password)
+        user.password = hashedPassword
+        await user.save()
+        await this.sendConfirmedEmail(userFromToken.email, `
+          Hello ${user.fullName},
+          Your password has been reset.
+          You can now sign in to your account.
+        `, 'Password reset')
+
+        return this.generateJWT(user)
+      } else {
+        throw new NotFoundException('User not found')
+      }
     }
   }
 }

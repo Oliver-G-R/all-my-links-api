@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types'
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class UserDto {
   @IsEmail({ message: 'This email is not valid' })
@@ -7,6 +7,8 @@ export class UserDto {
   readonly email: string
 
   @IsString()
+  @MaxLength(20, { message: 'Password is too long, max length is 20' })
+  @MinLength(8, { message: 'Password is too short, min length is 8' })
   @IsNotEmpty({ message: 'Password is required' })
   readonly password: string
 

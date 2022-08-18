@@ -24,9 +24,6 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
     nickName: string
 
-  @Prop({ default: false, required: false })
-    isVerify: boolean
-
   @Prop({ default: Date.now })
     createdAt: Date
 
