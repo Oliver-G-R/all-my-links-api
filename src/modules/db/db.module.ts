@@ -17,7 +17,8 @@ import { MongooseModule } from '@nestjs/mongoose'
         const password = configService.get<string>('database.pass')
 
         const uriDev = `${connection}://${host}:${port}/${dbName}`
-        const uriProd = `${connection}://${user}:${password}@${dbName}.${host}/`
+
+        const uriProd = `${connection}://${user}:${password}@${dbName}.${host}/?retryWrites=true&w=majority`
 
         return {
           uri: process.env.NODE_ENV === 'development' ? uriDev : uriProd
