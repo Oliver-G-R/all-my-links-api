@@ -154,7 +154,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ email })
 
     if (user) {
-      const generateToken = this.generateJWT(user, '1m')
+      const generateToken = this.generateJWT(user, '5m')
       try {
         await this.mailerService.sendMail({
           to: user.email,
