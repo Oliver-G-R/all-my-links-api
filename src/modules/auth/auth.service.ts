@@ -49,7 +49,7 @@ export class AuthService {
       pass: hashedPassword
     }
     return this.jwtService.sign(payload, {
-      expiresIn: '1m'
+      expiresIn: '5m'
     })
   }
 
